@@ -1,82 +1,60 @@
 import datetime
+import time
+import pytz
 import random
 import calendar
-import pytz
 
-def main():
-    while True:
-        print_menu()
-        choice = input("Enter your choice: ")
+# Task 0: Show a simple menu
+def show_menu():
+    print("========================Menu:")
+    print("1. Display current time")
+    print("2. Display current time in UNIX format")
+    print("3. Convert string to datetime")
+    print("4. Check leap year and time until next leap year")
+    print("5. Output timedelta object with options")
+    print("6. Print calendar")
+    print("7. Display current time in different time zones")
+    print("8. Display time at the opposite end of the world")
+    print("9. Output random joke")
+    print("10. Surprise feature")
+    print("0. Exit")
 
-        if choice == "1":
-            display_current_time()
-        elif choice == "2":
-            display_unix_time()
-        elif choice == "3":
-            convert_string_to_datetime()
-        elif choice == "4":
-            check_leap_year()
-        elif choice == "5":
-            extract_units_from_timedelta()
-        elif choice == "6":
-            print_calendar()
-        elif choice == "7":
-            display_time_in_different_timezones()
-        elif choice == "8":
-            display_opposite_end_of_the_world()
-        elif choice == "9":
-            display_random_joke()
-        elif choice == "0":
-            break
-        else:
-            print("Invalid choice. Please try again.")
-
-def print_menu():
-    menu = [
-        "================Menu:===============",
-        "1. Display current time",
-        "2. Display current time in UNIX format",
-        "3. Convert string to datetime",
-        "4. Check leap year and time until next leap year",
-        "5. Extract units from timedelta",
-        "6. Print calendar",
-        "7. Display current time in different time zones",
-        "8. Display time at the opposite end of the world",
-        "9. Random joke",
-        "0. Exit"
-    ]
-    print("\n".join(menu))
-
+# Task 1: Display current time
 def display_current_time():
     current_time = datetime.datetime.now()
-    print(f"Current time: {current_time}")
+    print("Current time:", current_time)
 
-def display_unix_time():
-    current_time = datetime.datetime.now()
-    unix_time = int(current_time.timestamp())
-    print(f"Current time (UNIX format): {unix_time}")
+# Task 2: Display current time in UNIX format
+def display_current_time_unix():
+    current_time_unix = int(time.time())
+    print("Current time in UNIX format:", current_time_unix)
 
+# Task 3: Convert string to datetime
 def convert_string_to_datetime():
     user_input = input("Enter a date and time (e.g., '2023-06-13 12:30'): ")
-    try:
-        datetime_obj = datetime.datetime.strptime(user_input, "%Y-%m-%d %H:%M")
+    datetime_format = "%Y-%m-%d %H:%M"
+    if datetime.datetime.strptime(user_input, datetime_format):
+        datetime_obj = datetime.datetime.strptime(user_input, datetime_format)
         print(f"Converted datetime: {datetime_obj}")
-    except ValueError:
+    else:
         print("Invalid format. Please try again.")
 
+# Task 4: Check leap year and time until next leap year
 def check_leap_year():
     current_year = datetime.datetime.now().year
-    is_leap_year = calendar.isleap(current_year)
-
-    if is_leap_year:
-        print(f"{current_year} is a leap year.")
+    if calendar.isleap(current_year):
+        print(f"{current_year} is a leap year")
     else:
-        next_leap_year = next(year for year in range(current_year+1, current_year+5) if calendar.isleap(year))
-        time_until_next_leap_year = datetime.datetime(next_leap_year, 1, 1) - datetime.datetime.now()
-        print(f"{current_year} is not a leap year.")
-        print(f"Time until next leap year: {time_until_next_leap_year}")
+        print(f"{current_year} is not a leap year")
+    
+    next_leap_year = current_year
+    while not calendar.isleap(next_leap_year):
+        next_leap_year += 1
+    time_until_next_leap_year = datetime.datetime(next_leap_year, 1, 1) - datetime.datetime.now()
+    print("Time until next leap year:", time_until_next_leap_year)
 
-def extract_units_from_timedelta():
+# Task 5: Output timedelta object with options
+def output_timedelta():
     time_delta = datetime.timedelta(days=5, hours=3, minutes=15)
     choices = {
         "1": ("Seconds:", time_delta.total_seconds()),
@@ -84,66 +62,102 @@ def extract_units_from_timedelta():
         "3": ("Years:", time_delta.days // 365)
     }
     choice = input("Which unit to display? (1. seconds, 2. days, 3. years): ")
-
     unit, value = choices.get(choice, ("Invalid choice.", None))
     print(f"{unit} {value}" if value is not None else unit)
 
-#-------------------------Sergii
+# Task 6: Print calendar
 def print_calendar():
-    year, month = map(int, input("Enter the year and month (e.g., '2023 6'): ").split())
-    calendar_obj = calendar.monthcalendar(year, month)
-    
-    # Print month and year
-    print(calendar.month_name[month], year)
-    
-    # Print weekday names
-    print("Mon Tue Wed Thu Fri Sat Sun")
-    
-    # Print calendar days
-    for week in calendar_obj:
-        for day in week:
-            if day != 0:
-                print(str(day).rjust(3), end=" ")
-            else:
-                print("   ", end=" ")
-        print()
-#----------------------------------
+    print("Current month Calendar will be displayed or enter year and month: ")
+    month = input("Month 'mm': ")
+    year = input("Year 'yyyy': ")
+    if month and year:
+        print(calendar.month(int(year), int(month)))
+    else:
+        current_month = datetime.datetime.now().month
+        current_year = datetime.datetime.now().year
+        print(calendar.month(current_year, current_month))
 
-def display_time_in_different_timezones():
+# Task 7: Display current time in different time zones
+def display_time_in_timezone():
     time_zones = {
         "1": "Europe/Dublin",
         "2": "America/Los_Angeles",
         "3": "Europe/Berlin",
         "4": "Africa/Johannesburg"
     }
-
     print("Select a timezone:")
     print("\n".join(f"{key}. {value}" for key, value in time_zones.items()))
-    
     selected_timezone = time_zones.get(input("Enter your choice: "))
-
     if selected_timezone:
         current_time = datetime.datetime.now(pytz.timezone(selected_timezone))
         print(f"Current time in {selected_timezone}: {current_time}")
     else:
         print("Invalid choice.")
 
-def display_opposite_end_of_the_world():
+# Task 8: Display time at the opposite end of the world
+def display_opposite_end_time():
+    opposite_end_timezone = pytz.timezone('Pacific/Apia')
     current_time = datetime.datetime.now()
-    opposite_time = current_time + datetime.timedelta(hours=12)
-    print(f"Current time: {current_time}")
-    print(f"Opposite end of the world time: {opposite_time}")
+    opposite_end_time = current_time.astimezone(opposite_end_timezone)
+    print("Current time:", current_time)
+    print("Opposite end of the world time:", opposite_end_time)
 
-def display_random_joke():
+# Task 9: Output random joke
+def output_random_joke():
     jokes = [
         "Why don't scientists trust atoms? Because they make up everything!",
-        "I got a job at a bakery because I kneaded dough.",
         "Why did the scarecrow win an award? Because he was outstanding in his field!",
-        "I used to be a baker, but I couldn't make enough dough.",
-        "What did the grape say when it got stepped on? Nothing, it just let out a little wine."
+        "Why don't skeletons fight each other? They don't have the guts!",
+        "Why did the tomato turn red? Because it saw the salad dressing!"
     ]
+    random_joke = random.choice(jokes)
+    print("Random Joke:", random_joke)
 
-    print(f"Random Joke:\n{random.choice(jokes)}")
+# Task 10: Surprise feature
+def surprise(birthday):
+    # Check if it's April 1st
+    if birthday.month == 4 and birthday.day == 1:
+        print("April Fools' Day Surprise: You've been pranked!")
+    else:
+        print("Sorry, no surprise for you today.")
 
-if __name__ == "__main__":
-    main()
+# Main program loop
+while True:
+    show_menu()
+    user_choice = input("Enter your choice: ")
+
+    if user_choice == "1":
+        display_current_time()
+    elif user_choice == "2":
+        display_current_time_unix()
+    elif user_choice == "3":
+        convert_string_to_datetime()
+    elif user_choice == "4":
+        check_leap_year()
+    elif user_choice == "5":
+        output_timedelta()
+    elif user_choice == "6":
+        print_calendar()
+    elif user_choice == "7":
+        display_time_in_timezone()
+    elif user_choice == "8":
+        display_opposite_end_time()
+    elif user_choice == "9":
+        output_random_joke()
+    elif user_choice == "10":
+        # Prompt the user to enter their birthday
+        birthday_str = input("Enter your birthday (e.g: YYYY-MM-DD): ")
+        if len(birthday_str) != 10:
+            print("Invalid birthday format. Please try again.")
+            continue
+        try:
+            birthday = datetime.datetime.strptime(birthday_str, "%Y-%m-%d").date()
+            surprise(birthday)
+        except ValueError:
+            print("Invalid birthday format. Please try again.")
+            continue
+    elif user_choice == "0":
+        print("Exiting...")
+        break
+    else:
+        print("Invalid choice. Please try again.")
