@@ -103,6 +103,7 @@ def display_opposite_end_time():
     print("Opposite end of the world time:", opposite_end_time)
 
 # Task 9: Output random joke
+# Done by Sam
 def output_random_joke():
     jokes = [
         "Why don't scientists trust atoms? Because they make up everything!",
