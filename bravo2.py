@@ -1,104 +1,149 @@
 import datetime
-import pytz
 import random
+import calendar
+import pytz
 
-# Function to display current time in a specific timezone
-def display_current_time(timezone):
-    tz = pytz.timezone(timezone)
-    current_time = datetime.datetime.now(tz)
-    print("Current time in", timezone, ":", current_time.strftime("%Y-%m-%d %H:%M:%S"))
-
-# Function to calculate and display time at the opposite end of the world
-def display_opposite_time(current_timezone):
-    opposite_timezone = ""
-    if current_timezone == "Asia/Tokyo":
-        opposite_timezone = "America/Los_Angeles"
-    elif current_timezone == "America/Los_Angeles":
-        opposite_timezone = "Asia/Tokyo"
-    elif current_timezone == "Europe/Dublin":
-        opposite_timezone = "Africa/Johannesburg"
-    elif current_timezone == "Africa/Johannesburg":
-        opposite_timezone = "Europe/Dublin"
-    elif current_timezone == "Europe/Berlin":
-        opposite_timezone = "America/Los_Angeles"
-    else:
-        opposite_timezone = "Europe/Berlin"
-
-    display_current_time(opposite_timezone)
-
-# Function to display a random joke
-def display_random_joke(jokes):
-    random_joke = random.choice(jokes)
-    print("\nRandom Joke:")
-    print(random_joke)
-    print()
-
-# Additional surprise feature: Countdown Timer
-def countdown_timer(end_date):
-    while True:
-        current_time = datetime.datetime.now()
-        time_diff = end_date - current_time
-
-        if time_diff.total_seconds() <= 0:
-            print("Countdown Timer: Time's up!")
-            break
-
-        print("Countdown Timer:", time_diff)
-        seconds = int(input("Enter the number of seconds to wait before checking again (0 to exit): "))
-
-        if seconds == 0:
-            print("Countdown Timer: Exiting.")
-            break
-
-        wait_time = datetime.timedelta(seconds=seconds)
-        end_date -= wait_time
-
-# Main program loop
 def main():
-    jokes = [
-        "Why don't scientists trust atoms? Because they make up everything!",
-        "Did you hear about the mathematician who's afraid of negative numbers? He'll stop at nothing to avoid them!",
-        "Why don't skeletons fight each other? They don't have the guts!",
-        "Why did the scarecrow win an award? Because he was outstanding in his field!",
-        "I'm reading a book about anti-gravity. It's impossible to put down!"
-    ]
-
-    print("Welcome to the Multinational Team Program!")
-
     while True:
-        print("\nPlease select an option:")
-        print("1. Display current time in a specific timezone")
-        print("2. Display time at the opposite end of the world")
-        print("3. Display a random joke")
-        print("4. Set a countdown timer")
-        print("5. Exit")
-
-        choice = input("Enter your choice (1-5): ")
+        print_menu()
+        choice = input("Enter your choice: ")
 
         if choice == "1":
-            timezone = input("Enter the timezone (e.g., Asia/Tokyo): ")
-            display_current_time(timezone)
-
+            display_current_time()
         elif choice == "2":
-            current_timezone = input("Enter your current timezone (e.g., Asia/Tokyo): ")
-            display_opposite_time(current_timezone)
-
+            display_unix_time()
         elif choice == "3":
-            display_random_joke(jokes)
-
+            convert_string_to_datetime()
         elif choice == "4":
-            end_date_input = input("Enter the end date and time (YYYY-MM-DD HH:MM:SS): ")
-            try:
-                end_date = datetime.datetime.strptime(end_date_input, "%Y-%m-%d %H:%M:%S")
-                countdown_timer(end_date)
-            except ValueError:
-                print("Invalid date and time format. Please try again.")
-
+            check_leap_year()
         elif choice == "5":
-            print("Exiting the program. Goodbye!")
+            extract_units_from_timedelta()
+        elif choice == "6":
+            print_calendar()
+        elif choice == "7":
+            display_time_in_different_timezones()
+        elif choice == "8":
+            display_opposite_end_of_the_world()
+        elif choice == "9":
+            display_random_joke()
+        elif choice == "0":
             break
-
         else:
             print("Invalid choice. Please try again.")
-            # random comment
 
+def print_menu():
+    menu = [
+        "================Menu:===============",
+        "1. Display current time",
+        "2. Display current time in UNIX format",
+        "3. Convert string to datetime",
+        "4. Check leap year and time until next leap year",
+        "5. Extract units from timedelta",
+        "6. Print calendar",
+        "7. Display current time in different time zones",
+        "8. Display time at the opposite end of the world",
+        "9. Random joke",
+        "0. Exit"
+    ]
+    print("\n".join(menu))
+
+def display_current_time():
+    current_time = datetime.datetime.now()
+    print(f"Current time: {current_time}")
+
+def display_unix_time():
+    current_time = datetime.datetime.now()
+    unix_time = int(current_time.timestamp())
+    print(f"Current time (UNIX format): {unix_time}")
+
+def convert_string_to_datetime():
+    user_input = input("Enter a date and time (e.g., '2023-06-13 12:30'): ")
+    try:
+        datetime_obj = datetime.datetime.strptime(user_input, "%Y-%m-%d %H:%M")
+        print(f"Converted datetime: {datetime_obj}")
+    except ValueError:
+        print("Invalid format. Please try again.")
+
+def check_leap_year():
+    current_year = datetime.datetime.now().year
+    is_leap_year = calendar.isleap(current_year)
+
+    if is_leap_year:
+        print(f"{current_year} is a leap year.")
+    else:
+        next_leap_year = next(year for year in range(current_year+1, current_year+5) if calendar.isleap(year))
+        time_until_next_leap_year = datetime.datetime(next_leap_year, 1, 1) - datetime.datetime.now()
+        print(f"{current_year} is not a leap year.")
+        print(f"Time until next leap year: {time_until_next_leap_year}")
+
+def extract_units_from_timedelta():
+    time_delta = datetime.timedelta(days=5, hours=3, minutes=15)
+    choices = {
+        "1": ("Seconds:", time_delta.total_seconds()),
+        "2": ("Days:", time_delta.days),
+        "3": ("Years:", time_delta.days // 365)
+    }
+    choice = input("Which unit to display? (1. seconds, 2. days, 3. years): ")
+
+    unit, value = choices.get(choice, ("Invalid choice.", None))
+    print(f"{unit} {value}" if value is not None else unit)
+
+#-------------------------Sergii
+def print_calendar():
+    year, month = map(int, input("Enter the year and month (e.g., '2023 6'): ").split())
+    calendar_obj = calendar.monthcalendar(year, month)
+    
+    # Print month and year
+    print(calendar.month_name[month], year)
+    
+    # Print weekday names
+    print("Mon Tue Wed Thu Fri Sat Sun")
+    
+    # Print calendar days
+    for week in calendar_obj:
+        for day in week:
+            if day != 0:
+                print(str(day).rjust(3), end=" ")
+            else:
+                print("   ", end=" ")
+        print()
+#----------------------------------
+
+def display_time_in_different_timezones():
+    time_zones = {
+        "1": "Europe/Dublin",
+        "2": "America/Los_Angeles",
+        "3": "Europe/Berlin",
+        "4": "Africa/Johannesburg"
+    }
+
+    print("Select a timezone:")
+    print("\n".join(f"{key}. {value}" for key, value in time_zones.items()))
+    
+    selected_timezone = time_zones.get(input("Enter your choice: "))
+
+    if selected_timezone:
+        current_time = datetime.datetime.now(pytz.timezone(selected_timezone))
+        print(f"Current time in {selected_timezone}: {current_time}")
+    else:
+        print("Invalid choice.")
+
+def display_opposite_end_of_the_world():
+    current_time = datetime.datetime.now()
+    opposite_time = current_time + datetime.timedelta(hours=12)
+    print(f"Current time: {current_time}")
+    print(f"Opposite end of the world time: {opposite_time}")
+
+def display_random_joke():
+    jokes = [
+        "Why don't scientists trust atoms? Because they make up everything!",
+        "I got a job at a bakery because I kneaded dough.",
+        "Why did the scarecrow win an award? Because he was outstanding in his field!",
+        "I used to be a baker, but I couldn't make enough dough.",
+        "What did the grape say when it got stepped on? Nothing, it just let out a little wine."
+    ]
+
+    print(f"Random Joke:\n{random.choice(jokes)}")
+
+if __name__ == "__main__":
+    main()
