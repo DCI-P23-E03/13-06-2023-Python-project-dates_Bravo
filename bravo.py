@@ -4,14 +4,14 @@ def display_menu():
     print("MENU:")
     print("1) Display current time : ")
     print("2) Display current time in Unix format: ")
-    print("3) Display the converted string into a dt object: ")
+    """print("3) Display the converted string into a dt object: ")
     print("4) Check if the year is a leap year: ")
-    print("5) ") 
+    print("5) ") """
+    print("0) Exit the program.")
 #defining a function for each task  
 def user_choice():
     choice = input ("Enter your choice: ")
-    return choice
-
+    
 
 def current_time():
 
@@ -27,6 +27,7 @@ def unix_format():
     formatted_date = datetime.strptime(given_date,"%m/%d/%Y, %H:%M:%S")
     unix_timestamp = datetime.timestamp(formatted_date)
     print("The Unix timestamp for the current date is:", unix_timestamp)
+
     
 #adding a while loop to repeats the block of code
 while True:
@@ -37,6 +38,8 @@ while True:
         
     elif choice == "2":
         unix_format()
-        
+     
+        break
     else :
-        print("Finished!")
+        print("Invalid choice! Please try another number. ")
+        
